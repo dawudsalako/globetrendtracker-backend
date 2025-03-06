@@ -4,20 +4,25 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)  # Allow frontend requests
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def home():
     return "Welcome to Globetrend Tracker API!", 200
 
 @app.route("/predict", methods=["GET"])
 def predict():
     category = request.args.get("category")
-    bill = float(request.args.get("bill", 0))
+    bill = request.args.get("bill")
     year = request.args.get("year")
 
-    if not category or not year:
+    if not category or not bill or not year:
         return jsonify({"error": "Missing parameters"}), 400
 
-    # Dummy price increase percentages
+    try:
+        bill = float(bill)
+    except ValueError:
+        return jsonify({"error": "Invalid bill amount"}), 400
+
+    # Define price increases
     price_increase = {
         "Vegan": {"2030": 11.80, "2040": 31.59, "2050": 52.78},
         "Balanced": {"2030": 13.39, "2040": 34.44, "2050": 57.00},
@@ -43,4 +48,4 @@ def predict():
     }), 200
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
