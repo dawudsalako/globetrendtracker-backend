@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Allow frontend requests
+CORS(app)  # Enable CORS to allow frontend requests
 
 @app.route("/", methods=["GET"])
 def home():
@@ -22,11 +22,10 @@ def predict():
     except ValueError:
         return jsonify({"error": "Invalid bill amount"}), 400
 
-    # Define price increases
     price_increase = {
         "Vegan": {"2030": 11.80, "2040": 31.59, "2050": 52.78},
         "Balanced": {"2030": 13.39, "2040": 34.44, "2050": 57.00},
-        "Keto": {"2030": 15.49, "2040": 38.25, "2050": 62.62},
+        "Meat and Dairy Heavy": {"2030": 15.49, "2040": 38.25, "2050": 62.62},
         "Vegetarian": {"2030": 13.14, "2040": 33.48, "2050": 55.15},
     }
 
@@ -40,7 +39,7 @@ def predict():
         "predictions": {
             "Vegan": round(bill * (1 + price_increase["Vegan"][year] / 100), 2),
             "Balanced": round(bill * (1 + price_increase["Balanced"][year] / 100), 2),
-            "Keto": round(bill * (1 + price_increase["Keto"][year] / 100), 2),
+            "Meat and Dairy Heavy": round(bill * (1 + price_increase["Meat and Dairy Heavy"][year] / 100), 2),
             "Vegetarian": round(bill * (1 + price_increase["Vegetarian"][year] / 100), 2),
         },
         "selected_category": category,
@@ -48,4 +47,4 @@ def predict():
     }), 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=10000, debug=True)
